@@ -2,7 +2,7 @@
 
 __version__ = "1.0.0"
 
-from extras.plugins import PluginConfig
+from netbox.plugins import PluginConfig
 
 # Registry of functions that can generate additional application metrics
 # All functions in the registry should take no argument and return an Iterator (or list) of prometheus Metric Object
