@@ -4,13 +4,12 @@ services:
   netbox:
     build:
       context: ../
-      dockerfile: development/Dockerfile
-    image: "ntc-netbox-plugin-metrics-ext/netbox:${NETBOX_VER}-py${PYTHON_VER}"
+      dockerfile: develop/Dockerfile
     command: >
       sh -c "python manage.py migrate &&
              python manage.py runserver 0.0.0.0:8000"
     ports:
-      - "8000:8000"
+      - '8000:8000'
     depends_on:
       - postgres
       - redis
@@ -18,14 +17,13 @@ services:
       - ./dev.env
     volumes:
       - ./configuration.py:/opt/netbox/netbox/netbox/configuration.py
-      - ./example_reports:/opt/netbox/netbox/reports
       - ../netbox_metrics_ext:/source/netbox_metrics_ext
+      - ../metrics:/opt/netbox/netbox/metrics
     tty: true
   worker:
     build:
       context: ../
-      dockerfile: development/Dockerfile
-    image: "ntc-netbox-plugin-metrics-ext/netbox:${NETBOX_VER}-py${PYTHON_VER}"
+      dockerfile: develop/Dockerfile
     command: sh -c "python manage.py rqworker"
     depends_on:
       - netbox
@@ -33,11 +31,11 @@ services:
       - ./dev.env
     volumes:
       - ./configuration.py:/opt/netbox/netbox/netbox/configuration.py
-      - ./example_reports:/opt/netbox/netbox/reports
       - ../netbox_metrics_ext:/source/netbox_metrics_ext
+      - ../metrics:/opt/netbox/netbox/sample_metrics_folder
     tty: true
   postgres:
-    image: postgres:10
+    image: postgres:12
     env_file: dev.env
     volumes:
       - pgdata_netbox_metrics_ext:/var/lib/postgresql/data
