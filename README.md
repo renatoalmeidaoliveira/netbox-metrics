@@ -1,6 +1,6 @@
-# ntc-netbox-plugin-metrics-ext
+# netbox-metrics
 
-A plugin for [NetBox](https://github.com/netbox-community/netbox) to expose additional metrics information.
+This plugin is a fork of (ntc-netbox-plugin-metrics-ext)[https://github.com/networktocode/ntc-netbox-plugin-metrics-ext] with support for newer NetBox versions, and some improvements.
 
 The plugin is composed of multiple features that can be used independantly:
 - Application Metrics Endpoint: prometheus endpoint at `/api/plugins/metrics-ext/app-metrics`
@@ -91,9 +91,38 @@ class MyPluginConfig(PluginConfig):
         register_metric_func(metric_circuit_bandwidth)
 ```
 
-### Option 3 - NOT AVAILABLE YET - Metrics directory
+### Option 3 -  Metrics directory
 
-In the future it will be possible to add metrics by adding them in a predefined directory, similar to reports and scripts.
+Its possible to dynamically load metrics to the plugin, for that you need to configure add `metrics_folder` inside the plugin configuration with the path of your metrics folder.
+For configure your custom metrics the NetBox user needs read/write permissions in the `metrics_folder` and your metric functions needs to use the `@custom_metric` decorator
+
+#### Configuration sample
+
+```python
+# configuration.py
+from netbox.metrics import metric_prefix_utilization
+PLUGINS_CONFIG = {
+    "netbox_metrics_ext": {
+      "app_metrics": {
+        "metrics_folder": "/opt/netbox/netbox/custom_metrics",
+      }
+    }
+},
+```
+
+#### Custom metric sample
+```python
+from prometheus_client.core import GaugeMetricFamily
+
+from netbox_metrics_ext import custom_metric
+
+@custom_metric
+def metric_devices():
+    
+    g = GaugeMetricFamily("dynamic_load_test", "Dynamic metric sample", value=10)
+    
+    yield g
+```
 
 ## Parameters
 
@@ -144,17 +173,26 @@ To enable this mode the environment variable `prometheus_multiproc_dir` must be 
 
 # Installation
 
+### Compatibility Matrix
+
+| Plugin Version | NetBox Version|
+|----------------|---------------|
+|1.0.0           | 3.7.x         |
+|2.0.0           | 4.0.x         |
+|2.0.0           | 4.1.x         |
+
+### Instaling the plugin 
+
 The plugin is available as a Python package in pypi and can be installed with pip
 ```shell
-pip install ntc-netbox-plugin-metrics-ext
+pip install netbox-metrics
 ```
 
-> The plugin is compatible with NetBox 2.8.1 and higher
 
-To ensure Application Metrics Plugin is automatically re-installed during future upgrades, create a file named `local_requirements.txt` (if not already existing) in the NetBox root directory (alongside `requirements.txt`) and list the `ntc-netbox-plugin-metrics-ext` package:
+To ensure Application Metrics Plugin is automatically re-installed during future upgrades, create a file named `local_requirements.txt` (if not already existing) in the NetBox root directory (alongside `requirements.txt`) and list the `netbox-metrics` package:
 
 ```no-highlight
-# echo ntc-netbox-plugin-metrics-ext >> local_requirements.txt
+# echo netbox-metrics >> local_requirements.txt
 ```
 
 Once installed, the plugin needs to be enabled in your `configuration.py`
@@ -183,53 +221,6 @@ Included within this plugin is a Grafana dashboard which will work with the exam
 
 ![Netbox Grafana Dashboard](netbox_grafana_dashboard.png)
 
-# Contributing
-
-Pull requests are welcomed and automatically built and tested against multiple version of Python and multiple version of NetBox through TravisCI.
-
-The project is packaged with a light development environment based on `docker-compose` to help with the local development of the project and to run the tests within TravisCI.
-
-The project is following Network to Code software development guideline and is leveraging:
-- Black, Pylint, Bandit and pydocstyle for Python linting and formatting.
-- Django unit test to ensure the plugin is working properly.
-
-### CLI Helper Commands
-
-The project is coming with a CLI helper based on [invoke](http://www.pyinvoke.org/) to help setup the development environment. The commands are listed below in 3 categories `dev environment`, `utility` and `testing`.
-
-Each command can be executed with `invoke <command>`. All commands support the arguments `--netbox-ver` and `--python-ver` if you want to manually define the version of Python and NetBox to use. Each command also has its own help `invoke <command> --help`
-
-#### Local dev environment
-```
-  build            Build all docker images.
-  debug            Start NetBox and its dependencies in debug mode.
-  destroy          Destroy all containers and volumes.
-  start            Start NetBox and its dependencies in detached mode.
-  stop             Stop NetBox and its dependencies.
-```
-
-#### Utility
-```
-  cli              Launch a bash shell inside the running NetBox container.
-  create-user      Create a new user in django (default: admin), will prompt for password.
-  makemigrations   Run Make Migration in Django.
-  nbshell          Launch a nbshell session.
-```
-#### Testing
-
-```
-  tests            Run all tests for this plugin.
-  pylint           Run pylint code analysis.
-  pydocstyle       Run pydocstyle to validate docstring formatting adheres to NTC defined standards.
-  bandit           Run bandit to validate basic static code security analysis.
-  black            Run black to check that Python files adhere to its style standards.
-  unittest         Run Django unit tests for the plugin.
-```
-
-## Questions
-
-For any questions or comments, please check the [FAQ](FAQ.md) first and feel free to swing by the [Network to Code slack channel](https://networktocode.slack.com/) (channel #networktocode).
-Sign up [here](http://slack.networktocode.com/)
 
 ## Default Metrics for the application metrics endpoint
 
