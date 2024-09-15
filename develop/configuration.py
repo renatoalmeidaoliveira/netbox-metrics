@@ -159,7 +159,7 @@ PLUGINS = ["netbox_metrics_ext"]
 PLUGINS_CONFIG = {
     "netbox_metrics_ext": {
         "app_metrics": {
-            "metric_folder": "/opt/netbox/netbox/sample_metric_folder",
+            "metrics_folder": "/opt/netbox/netbox/sample_metrics_folder",
         },
     }
 }
