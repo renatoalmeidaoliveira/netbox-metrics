@@ -1,5 +1,5 @@
 """Plugin declaration for netbox_metrics_ext."""
-from extras.plugins import PluginConfig
+from netbox.plugins import PluginConfig
 
 from .version import __version__
 
@@ -39,8 +39,8 @@ class MetricsExtConfig(PluginConfig):
     description = "Plugin to improve the instrumentation of NetBox and expose additional metrics (Application Metrics, RQ Worker)."
     base_url = "metrics-ext"
     required_settings = []
-    min_version = "3.7.0"
-    max_version = "3.7.99"
+    min_version = "4.0.0"
+    max_version = "4.1.99"
     default_settings = {
         "app_metrics": {
             "models": {

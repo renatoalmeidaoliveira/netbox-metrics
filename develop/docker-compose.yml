@@ -18,7 +18,7 @@ services:
     volumes:
       - ./configuration.py:/opt/netbox/netbox/netbox/configuration.py
       - ../netbox_metrics_ext:/source/netbox_metrics_ext
-      - ../metrics:/opt/netbox/netbox/metrics
+      - ../sample_metric_folder:/opt/netbox/netbox/sample_metrics_folder
     tty: true
   worker:
     build:
@@ -32,7 +32,7 @@ services:
     volumes:
       - ./configuration.py:/opt/netbox/netbox/netbox/configuration.py
       - ../netbox_metrics_ext:/source/netbox_metrics_ext
-      - ../metrics:/opt/netbox/netbox/sample_metrics_folder
+      - ../sample_metric_folder:/opt/netbox/netbox/sample_metrics_folder
     tty: true
   postgres:
     image: postgres:12

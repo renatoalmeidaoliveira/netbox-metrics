@@ -51,9 +51,9 @@ def metric_reports():
         Iterator[GaugeMetricFamily]
             netbox_report_stats: with report module, name and status as labels
     """
-    from core.models import ContentType, Job
+    from core.models import ObjectType, Job
 
-    report_object_type = ContentType.objects.get_by_natural_key(app_label="extras", model="reportmodule")
+    report_object_type = ObjectType.objects.get_by_natural_key(app_label='extras', model='reportmodule')
     report_results = Job.objects.filter(object_type=report_object_type)
 
     gauge = GaugeMetricFamily("netbox_report_stats", "Per report statistics", labels=["module", "name", "status"])

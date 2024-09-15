@@ -159,8 +159,14 @@ PLUGINS = ["netbox_metrics_ext"]
 PLUGINS_CONFIG = {
     "netbox_metrics_ext": {
         "app_metrics": {
+            "models": {
+                "dcim": {"Site": True, "Rack": True, "Device": True,},
+                "ipam": {"IPAddress": True, "Prefix": True},
+            },
+            "reports": True,
+            "queues": True,
             "metrics_folder": "/opt/netbox/netbox/sample_metrics_folder",
-        },
+        }
     }
 }
 
