@@ -53,8 +53,8 @@ def metric_reports():
     """
     from core.models import ContentType, Job
 
-    report_object_type = ContentType.objects.get_by_natural_key(app_label='extras', model='reportmodule')
-    report_results = Job.objects.filter(object_type=object_type)
+    report_object_type = ContentType.objects.get_by_natural_key(app_label="extras", model="reportmodule")
+    report_results = Job.objects.filter(object_type=report_object_type)
 
     gauge = GaugeMetricFamily("netbox_report_stats", "Per report statistics", labels=["module", "name", "status"])
     for result in report_results:

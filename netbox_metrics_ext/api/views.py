@@ -1,6 +1,9 @@
 """Django views for Prometheus metric collection and reporting."""
 import time
 import logging
+import sys
+import os
+import importlib
 
 from django.conf import settings
 from django.http import HttpResponse
@@ -20,6 +23,14 @@ class CustomCollector:
 
     def collect(self):  # pylint: disable=no-self-use
         """Collect metrics for all plugins and extras."""
+        if "metric_folder" in PLUGIN_SETTINGS and PLUGIN_SETTINGS["metric_folder"]:
+            metric_folder = PLUGIN_SETTINGS["metric_folder"]
+            for file in os.listdir(metric_folder):
+                if file.endswith(".py"):
+                    logger.info(f"Loading custom metric from {file}")
+                    sys.path.insert(0, metric_folder)
+                    importlib.import_module(file[:-3])
+
         start = time.time()
         if "queues" in PLUGIN_SETTINGS and PLUGIN_SETTINGS["queues"]:
             for metric in metric_rq():
