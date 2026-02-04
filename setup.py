@@ -29,7 +29,7 @@ setup(
     description = "Plugin to improve the instrumentation of NetBox and expose additional metrics (Application Metrics, RQ Worker).",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url='https://github.com/renatoalmeidaoliveira/nbrisk',
+    url='https://github.com/renatoalmeidaoliveira/netbox-metrics',
     author='Renato Almdida Oliveira',
     author_email='renato.almeida.oliveira@gmail.com',
     install_requires=[],
