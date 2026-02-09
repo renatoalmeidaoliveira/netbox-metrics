@@ -35,7 +35,7 @@ services:
       - ../sample_metric_folder:/opt/netbox/netbox/sample_metrics_folder
     tty: true
   postgres:
-    image: postgres:12
+    image: postgres:17
     env_file: dev.env
     volumes:
       - pgdata_netbox_metrics_ext:/var/lib/postgresql/data

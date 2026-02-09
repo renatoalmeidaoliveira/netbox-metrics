@@ -12,9 +12,6 @@ from django_rq.utils import get_statistics
 
 logger = logging.getLogger(__name__)
 
-netbox_version = version.parse(settings.VERSION)
-
-
 def metric_rq():
     """Return stats about RQ Worker in Prometheus Metric format.
 
@@ -47,6 +44,9 @@ def metric_rq():
 def metric_reports():
     """Return Reports results in Prometheus Metric format.
 
+    DEPRECATED: This function is broken on NetBox 4.0+ and kept only for backwards compatibility.
+    Use metric_scripts() instead for NetBox 4.5+.
+
     Return:
         Iterator[GaugeMetricFamily]
             netbox_report_stats: with report module, name and status as labels
@@ -64,6 +64,31 @@ def metric_reports():
         for report_name, stats in result.data.items():
             for status in ["success", "warning", "failure", "info"]:
                 gauge.add_metric([result.name, report_name, status], stats[status])
+    yield gauge
+
+
+def metric_scripts():
+    """Return Scripts results in Prometheus Metric format.
+
+    Works with NetBox 4.5+ which uses scriptmodule instead of reportmodule.
+
+    Return:
+        Iterator[GaugeMetricFamily]
+            netbox_script_stats: with script module, name and status as labels
+    """
+    from core.models import ObjectType, Job
+
+    script_object_type = ObjectType.objects.get_by_natural_key(app_label='extras', model='scriptmodule')
+    script_results = Job.objects.filter(object_type=script_object_type)
+
+    gauge = GaugeMetricFamily("netbox_script_stats", "Per script statistics", labels=["module", "name", "status"])
+    for result in script_results:
+        if not result.data:
+            continue
+
+        for script_name, stats in result.data.items():
+            for status in ["success", "warning", "failure", "info"]:
+                gauge.add_metric([result.name, script_name, status], stats[status])
     yield gauge
 
 

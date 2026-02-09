@@ -12,7 +12,7 @@ import prometheus_client
 from prometheus_client.core import CollectorRegistry, GaugeMetricFamily
 
 from netbox_metrics_ext import __REGISTRY__
-from netbox_metrics_ext.metrics import collect_extras_metric, metric_reports, metric_models, metric_rq
+from netbox_metrics_ext.metrics import collect_extras_metric, metric_reports, metric_scripts, metric_models, metric_rq
 
 logger = logging.getLogger(__name__)
 PLUGIN_SETTINGS = settings.PLUGINS_CONFIG["netbox_metrics_ext"]["app_metrics"]
@@ -38,6 +38,10 @@ class CustomCollector:
 
         if "reports" in PLUGIN_SETTINGS and PLUGIN_SETTINGS["reports"]:
             for metric in metric_reports():
+                yield metric
+
+        if "scripts" in PLUGIN_SETTINGS and PLUGIN_SETTINGS["scripts"]:
+            for metric in metric_scripts():
                 yield metric
 
         if "models" in PLUGIN_SETTINGS:

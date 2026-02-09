@@ -40,14 +40,15 @@ class MetricsExtConfig(PluginConfig):
     base_url = "metrics-ext"
     required_settings = []
     min_version = "4.0.0"
-    max_version = "4.1.99"
+    max_version = "4.5.99"
     default_settings = {
         "app_metrics": {
             "models": {
                 "dcim": {"Site": True, "Rack": True, "Device": True,},
                 "ipam": {"IPAddress": True, "Prefix": True},
             },
-            "reports": True,
+            "reports": False,  # Legacy - broken on NetBox 4.0+, kept for backwards compatibility
+            "scripts": False,  # New - works on NetBox 4.5+
             "queues": True,
         }
     }

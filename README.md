@@ -16,7 +16,7 @@ System metrics and application level metrics are complementary with each other
 
 Currently the plugin exposes these simple metrics by default:
 - RQ Queues stats
-- Reports stats
+- Scripts stats (NetBox 4.5+) / Reports stats (legacy, broken on NetBox 4.0+)
 - Models count (configurable via configuration.py)
 
 ## Add your own metrics
@@ -127,7 +127,8 @@ def metric_devices():
 ## Parameters
 
 The behavior of the app_metrics feature can be controlled with the following list of settings (under `netbox_metrics_ext > app_metrics`):
-- `reports` boolean (default True), publish stats about the reports (success, warning, info, failure)
+- `scripts` boolean (default False), publish stats about scripts (success, warning, info, failure). Works with NetBox 4.5+
+- `reports` boolean (default False), **DEPRECATED** - Legacy support for reports. Broken on NetBox 4.0+, use `scripts` instead
 - `queues` boolean (default True), publish stats about RQ Worker (nbr of worker, nbr and type of job in the different queues)
 - `models` nested dict, publish the count for a given object (Nbr Device, Nbr IP etc.. ). The first level must be the name of the module in lowercase (dcim, ipam etc..), the second level must be the name of the object (usually starting with a uppercase)
     ```python
@@ -207,7 +208,8 @@ PLUGINS = ["netbox_metrics_ext"]
 #         "dcim": {"Site": True, "Rack": True, "Device": True,},
 #          "ipam": {"IPAddress": True, "Prefix": True},
 #        },
-#        "reports": True,
+#        "scripts": True,   # Enable for NetBox 4.5+
+#        "reports": False,  # Legacy, broken on NetBox 4.0+
 #        "queues": True,
 #       }
 #     }
@@ -238,12 +240,12 @@ netbox_queue_stats{name="default",status="started"} 0.0
 netbox_queue_stats{name="default",status="deferred"} 0.0
 netbox_queue_stats{name="default",status="failed"} 0.0
 netbox_queue_stats{name="default",status="scheduled"} 0.0
-# HELP netbox_report_stats Per report statistics
-# TYPE netbox_report_stats gauge
-netbox_report_stats{name="test_hostname",status="success"} 13.0
-netbox_report_stats{name="test_hostname",status="warning"} 0.0
-netbox_report_stats{name="test_hostname",status="failure"} 0.0
-netbox_report_stats{name="test_hostname",status="info"} 0.0
+# HELP netbox_script_stats Per script statistics
+# TYPE netbox_script_stats gauge
+netbox_script_stats{module="test_module",name="test_script",status="success"} 13.0
+netbox_script_stats{module="test_module",name="test_script",status="warning"} 0.0
+netbox_script_stats{module="test_module",name="test_script",status="failure"} 0.0
+netbox_script_stats{module="test_module",name="test_script",status="info"} 0.0
 # HELP netbox_model_count Per NetBox Model count
 # TYPE netbox_model_count gauge
 netbox_model_count{app="dcim",name="Site"} 24.0

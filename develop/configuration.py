@@ -163,7 +163,8 @@ PLUGINS_CONFIG = {
                 "dcim": {"Site": True, "Rack": True, "Device": True,},
                 "ipam": {"IPAddress": True, "Prefix": True},
             },
-            "reports": True,
+            "reports": False,
+            "scripts": True,
             "queues": True,
             "metrics_folder": "/opt/netbox/netbox/sample_metrics_folder",
         }
